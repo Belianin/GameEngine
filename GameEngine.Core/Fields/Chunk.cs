@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using GameEngine.Core.Entities;
 
 namespace GameEngine.Core.Fields
 {

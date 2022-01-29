@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using GameEngine.Core.Entities;
 using GameEngine.Core.Fields;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,6 +30,8 @@ namespace GameEngine.Core
             // TODO: Add your initialization logic here
 
             field = GameFieldFactory.GetField(512, 256, 64);
+            field.SpawnEntity(EntityFactory.SpawnPoint(100, 100));
+            
             rectangle = new Texture2D(graphics.GraphicsDevice, 1, 1);
             rectangle.SetData(new[] {Color.White});
             
@@ -54,7 +57,7 @@ namespace GameEngine.Core
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Yellow);
 
             spriteBatch.Begin();
             for (int x = 0; x < field.Chunks.GetLength(0); x++)
@@ -63,6 +66,10 @@ namespace GameEngine.Core
                 {
                     var chunk = field.Chunks[x, y];
                     DrawOutlineRectangle(chunk.Start.X, chunk.Start.Y, chunk.Width, chunk.Height, 2, Color.Black);
+                    foreach (var entity in chunk.Entities)
+                    {
+                        spriteBatch.Draw(rectangle, new Rectangle((int) entity.Position.X - 10, (int) entity.Position.Y - 10, 20, 20), Color.Red);
+                    }
                 }
             }
             spriteBatch.End();
