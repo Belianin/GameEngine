@@ -19,7 +19,7 @@ namespace GameEngine.Core.Fields
                         ? width - chunkSize * (horizontalChunksCount - 1)
                         : chunkSize;
                     var chunkHeight = y == verticalChunkCount - 1
-                        ? width - chunkSize * (verticalChunkCount - 1)
+                        ? height - chunkSize * (verticalChunkCount - 1)
                         : chunkSize;
                     
                     chunks[x, y] = new Chunk(new Point(x * chunkSize, y * chunkSize), chunkWidth, chunkHeight);

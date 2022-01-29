@@ -19,6 +19,18 @@ namespace GameEngine.Tests.Fields
         }
         
         [Test]
+        public void GenerateField_WithRoundParameters_NotSqaure()
+        {
+            var field = GameFieldFactory.GetField(100, 60, 20);
+
+            field.Chunks.GetLength(0).Should().Be(5);
+            field.Chunks.GetLength(1).Should().Be(3);
+
+            foreach (var chunk in field.Chunks) 
+                chunk.Should().Match<Chunk>(x => x.Height == 20 && x.Width == 20);
+        }
+        
+        [Test]
         public void GenerateField_WithNotRoundParameters()
         {
             var field = GameFieldFactory.GetField(100, 100, 30);
