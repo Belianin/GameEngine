@@ -21,58 +21,7 @@ namespace GameEngine.Core
             return new PointF(p1.X + a2 * t1, p1.Y + a1 * t1);
         }
 
-        // Пока, боюсь представить как это работает
         public static bool IsPointInsidePolygon(PointF point, PointF[] polygon)
-        {
-            var i1 = 0;
-            var i2 = 0;
-            var S = 0f;
-            var S1 = 0f;
-            var S2 = 0f;
-            var S3 = 0f;
-            var flag = false;
-            for (var n = 0; n < polygon.Length; n++)
-            {
-                i1 = n < polygon.Length - 1 ? n + 1 : 0;
-                while (!flag)
-                {
-                    i2 = i1 + 1;
-                    if (i2 >= polygon.Length)
-                        i2 = 0;
-                    if (i2 == (n < polygon.Length - 1 ? n + 1 : 0))
-                        break;
-                    S = Math.Abs(polygon[i1].X * (polygon[i2].Y - polygon[n].Y) +
-                                 polygon[i2].X * (polygon[n].Y - polygon[i1].Y) +
-                                 polygon[n].X * (polygon[i1].Y - polygon[i2].Y));
-                    S1 = Math.Abs(polygon[i1].X * (polygon[i2].Y - point.Y) +
-                                  polygon[i2].X * (point.Y - polygon[i1].Y) +
-                                  point.X * (polygon[i1].Y - polygon[i2].Y));
-                    S2 = Math.Abs(polygon[n].X * (polygon[i2].Y - point.Y) +
-                                  polygon[i2].X * (point.Y - polygon[n].Y) +
-                                  point.X * (polygon[n].Y - polygon[i2].Y));
-                    S3 = Math.Abs(polygon[i1].X * (polygon[n].Y - point.Y) +
-                                  polygon[n].X * (point.Y - polygon[i1].Y) +
-                                  point.X * (polygon[i1].Y - polygon[n].Y));
-                    if (Math.Abs(S - (S1 + S2 + S3)) < 0.1)
-                    {
-                        flag = true;
-                        break;
-                    }
-
-                    i1 = i1 + 1;
-                    if (i1 >= polygon.Length)
-                        i1 = 0;
-                    break;
-                }
-
-                if (flag)
-                    break;
-            }
-
-            return flag;
-        }
-
-        public static bool IsPointInsidePolygon2(PointF point, PointF[] polygon)
         {
             // Create a point for line segment from p to infinite
             var extreme = new PointF(1000000, point.Y);

@@ -33,12 +33,6 @@ namespace GameEngine.Tests
         {
             LinearMath.IsPointInsidePolygon(point, polygon).Should().BeTrue();
         }
-        
-        [TestCaseSource(nameof(GetPointsInPolygon))]
-        public void DetectPoint_InPolygon_Algorithm2(PointF point, PointF[] polygon)
-        {
-            LinearMath.IsPointInsidePolygon2(point, polygon).Should().BeTrue();
-        }
 
         public static IEnumerable<TestCaseData> GetPointsInPolygon()
         {
@@ -57,7 +51,6 @@ namespace GameEngine.Tests
                 new PointF(-20, -40),
                 new PointF(-40, 20)
             }) { TestName = "Point in center of not aligned rectangle" };
-            
             
             yield return new TestCaseData(new PointF(0, 0), new[]
             {
