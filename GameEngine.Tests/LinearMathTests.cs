@@ -82,5 +82,55 @@ namespace GameEngine.Tests
                 new PointF(-100, 40)
             }) { TestName = "Point in polygon with six vexes and point is \"not on axis\"" };
         }
+
+        [TestCaseSource(nameof(GetPolygonsThatIntersectsPolygons))]
+        public void Detect_PolygonIntersectsPolygon(PointF[] polygon1, PointF[] polygon2)
+        {
+            LinearMath.ArePolygonsIntersect(polygon1, polygon2).Should().BeTrue();
+            LinearMath.ArePolygonsIntersect(polygon2, polygon1).Should().BeTrue();
+        }
+
+        public static IEnumerable<TestCaseData> GetPolygonsThatIntersectsPolygons()
+        {
+            yield return new TestCaseData(new[]
+                {
+                    new PointF(0, 0),
+                    new PointF(100, 0),
+                    new PointF(0, 100),
+                    new PointF(100, 100)
+                },
+                new[]
+                {
+                    new PointF(50, 50),
+                    new PointF(150, 50),
+                    new PointF(50, 150),
+                    new PointF(150, 150)
+                }) {TestName = "Intersect two squares"};
+        }
+        
+        [TestCaseSource(nameof(GetPolygonsThatNotIntersectsPolygons))]
+        public void Detect_PolygonNotIntersectsPolygon(PointF[] polygon1, PointF[] polygon2)
+        {
+            LinearMath.ArePolygonsIntersect(polygon1, polygon2).Should().BeFalse();
+            LinearMath.ArePolygonsIntersect(polygon2, polygon1).Should().BeFalse();
+        }
+
+        public static IEnumerable<TestCaseData> GetPolygonsThatNotIntersectsPolygons()
+        {
+            yield return new TestCaseData(new[]
+                {
+                    new PointF(0, 0),
+                    new PointF(100, 0),
+                    new PointF(0, 100),
+                    new PointF(100, 100)
+                },
+                new[]
+                {
+                    new PointF(200, 250),
+                    new PointF(350, 250),
+                    new PointF(250, 350),
+                    new PointF(350, 350)
+                }) {TestName = "Intersect two squares"};
+        }
     }
 }

@@ -21,6 +21,17 @@ namespace GameEngine.Core
             return new PointF(p1.X + a2 * t1, p1.Y + a1 * t1);
         }
 
+        public static bool ArePolygonsIntersect(PointF[] polygon1, PointF[] polygon2)
+        {
+            foreach (var point in polygon1)
+            {
+                if (IsPointInsidePolygon(point, polygon2))
+                    return true;
+            }
+
+            return false;
+        }
+
         public static bool IsPointInsidePolygon(PointF point, PointF[] polygon)
         {
             // Create a point for line segment from p to infinite
@@ -36,8 +47,7 @@ namespace GameEngine.Core
                 // Check if the line segment from 'p' to
                 // 'extreme' intersects with the line
                 // segment from 'polygon[i]' to 'polygon[next]'
-                if (DoIntersect(polygon[i],
-                    polygon[next], point, extreme))
+                if (DoIntersect(polygon[i], polygon[next], point, extreme))
                 {
                     // If the point 'p' is collinear with line
                     // segment 'i-next', then check if it lies
