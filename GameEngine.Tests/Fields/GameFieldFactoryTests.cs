@@ -51,5 +51,4 @@ namespace GameEngine.Tests.Fields
             }
         }
     }
-    
 }

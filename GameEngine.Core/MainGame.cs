@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using GameEngine.Core.Entities;
 using GameEngine.Core.Fields;
 using Microsoft.Xna.Framework;
@@ -32,6 +31,7 @@ namespace GameEngine.Core
 
             field = GameFieldFactory.GetField(512, 256, 64);
             field.SpawnEntity(EntityFactory.SpawnPoint(100, 100, new Vector2(1, 0.5f)));
+            field.SpawnEntity(EntityFactory.SpawnPoint(200, 150, new Vector2(-1, -0.5f)));
             
             rectangle = new Texture2D(graphics.GraphicsDevice, 1, 1);
             rectangle.SetData(new[] {Color.White});
