@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using GameEngine.Core.Entities;
 using GameEngine.Core.Fields;
 using Microsoft.Xna.Framework;
@@ -30,7 +31,7 @@ namespace GameEngine.Core
             // TODO: Add your initialization logic here
 
             field = GameFieldFactory.GetField(512, 256, 64);
-            field.SpawnEntity(EntityFactory.SpawnPoint(100, 100));
+            field.SpawnEntity(EntityFactory.SpawnPoint(100, 100, new Vector2(1, 0.5f)));
             
             rectangle = new Texture2D(graphics.GraphicsDevice, 1, 1);
             rectangle.SetData(new[] {Color.White});
@@ -50,7 +51,7 @@ namespace GameEngine.Core
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            field.Tick();
 
             base.Update(gameTime);
         }
