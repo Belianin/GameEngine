@@ -21,24 +21,8 @@ namespace GameEngine.Core
             return new PointF(p1.X + a2 * t1, p1.Y + a1 * t1);
         }
 
-        // Не работает :/
-        public static bool IsPointInsidePolygon2(PointF point, PointF[] polygon)
-        {
-            var j = polygon.Length - 1;
-            var result = false;
-            for (int i = 0; i < polygon.Length; i++)
-            {
-                if ((polygon[i].Y <= point.Y && point.Y < polygon[j].Y || polygon[j].Y <= point.Y && point.Y < polygon[i].Y) &&
-                    point.X > (polygon[j].X - polygon[i].X) * (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X)
-                    result = !result;
-                j = i;
-            }
-
-            return result;
-        }
-        
         // Пока, боюсь представить как это работает
-        public static bool IsPointInsidePolygon(PointF point, PointF[] p)
+        public static bool IsPointInsidePolygon(PointF point, PointF[] polygon)
         {
             var i1 = 0;
             var i2 = 0;
@@ -47,42 +31,156 @@ namespace GameEngine.Core
             var S2 = 0f;
             var S3 = 0f;
             var flag = false;
-            for (var n = 0; n < p.Length; n++)
+            for (var n = 0; n < polygon.Length; n++)
             {
-                i1 = n < p.Length-1 ? n + 1 : 0;
+                i1 = n < polygon.Length - 1 ? n + 1 : 0;
                 while (!flag)
                 {
                     i2 = i1 + 1;
-                    if (i2 >= p.Length)
+                    if (i2 >= polygon.Length)
                         i2 = 0;
-                    if (i2 == (n < p.Length-1 ? n + 1 : 0))
+                    if (i2 == (n < polygon.Length - 1 ? n + 1 : 0))
                         break;
-                    S = Math.Abs(p[i1].X * (p[i2].Y - p[n ].Y) +
-                             p[i2].X * (p[n ].Y - p[i1].Y) +
-                             p[n].X  * (p[i1].Y - p[i2].Y));
-                    S1 = Math.Abs(p[i1].X * (p[i2].Y - point.Y) +
-                              p[i2].X * (point.Y       - p[i1].Y) +
-                              point.X       * (p[i1].Y - p[i2].Y));
-                    S2 = Math.Abs(p[n ].X * (p[i2].Y - point.Y) +
-                                  p[i2].X * (point.Y       - p[n ].Y) +
-                                  point.X       * (p[n ].Y - p[i2].Y));
-                    S3 = Math.Abs(p[i1].X * (p[n ].Y - point.Y) +
-                                  p[n ].X * (point.Y       - p[i1].Y) +
-                                  point.X       * (p[i1].Y - p[n ].Y));
-                    if (Math.Abs(S - (S1 + S2 + S3)) < 0.1) 
+                    S = Math.Abs(polygon[i1].X * (polygon[i2].Y - polygon[n].Y) +
+                                 polygon[i2].X * (polygon[n].Y - polygon[i1].Y) +
+                                 polygon[n].X * (polygon[i1].Y - polygon[i2].Y));
+                    S1 = Math.Abs(polygon[i1].X * (polygon[i2].Y - point.Y) +
+                                  polygon[i2].X * (point.Y - polygon[i1].Y) +
+                                  point.X * (polygon[i1].Y - polygon[i2].Y));
+                    S2 = Math.Abs(polygon[n].X * (polygon[i2].Y - point.Y) +
+                                  polygon[i2].X * (point.Y - polygon[n].Y) +
+                                  point.X * (polygon[n].Y - polygon[i2].Y));
+                    S3 = Math.Abs(polygon[i1].X * (polygon[n].Y - point.Y) +
+                                  polygon[n].X * (point.Y - polygon[i1].Y) +
+                                  point.X * (polygon[i1].Y - polygon[n].Y));
+                    if (Math.Abs(S - (S1 + S2 + S3)) < 0.1)
                     {
                         flag = true;
                         break;
                     }
+
                     i1 = i1 + 1;
-                    if (i1 >= p.Length)
+                    if (i1 >= polygon.Length)
                         i1 = 0;
                     break;
                 }
+
                 if (flag)
                     break;
             }
+
             return flag;
+        }
+
+        public static bool IsPointInsidePolygon2(PointF point, PointF[] polygon)
+        {
+            // Create a point for line segment from p to infinite
+            var extreme = new PointF(10000, point.Y);
+ 
+            // Count intersections of the above line
+            // with sides of polygon
+            int count = 0, i = 0;
+            do
+            {
+                int next = (i + 1) % polygon.Length;
+ 
+                // Check if the line segment from 'p' to
+                // 'extreme' intersects with the line
+                // segment from 'polygon[i]' to 'polygon[next]'
+                if (DoIntersect(polygon[i],
+                    polygon[next], point, extreme))
+                {
+                    // If the point 'p' is collinear with line
+                    // segment 'i-next', then check if it lies
+                    // on segment. If it lies, return true, otherwise false
+                    if (GetOrientation(polygon[i], point, polygon[next]) == 0)
+                    {
+                        return IsOnSegment(polygon[i], point,
+                            polygon[next]);
+                    }
+                    count++;
+                }
+                i = next;
+            } while (i != 0);
+ 
+            // Return true if count is odd, false otherwise
+            return (count % 2 == 1); // Same as (count%2 == 1)
+        }
+        
+        // The function that returns true if
+        // line segment 'p1q1' and 'p2q2' intersect.
+        private static bool DoIntersect(PointF p1, PointF q1, PointF p2, PointF q2)
+        {
+            // Find the four orientations needed for
+            // general and special cases
+            int o1 = GetOrientation(p1, q1, p2);
+            int o2 = GetOrientation(p1, q1, q2);
+            int o3 = GetOrientation(p2, q2, p1);
+            int o4 = GetOrientation(p2, q2, q1);
+ 
+            // General case
+            if (o1 != o2 && o3 != o4)
+            {
+                return true;
+            }
+ 
+            // Special Cases
+            // p1, q1 and p2 are collinear and
+            // p2 lies on segment p1q1
+            if (o1 == 0 && IsOnSegment(p1, p2, q1))
+            {
+                return true;
+            }
+ 
+            // p1, q1 and p2 are collinear and
+            // q2 lies on segment p1q1
+            if (o2 == 0 && IsOnSegment(p1, q2, q1))
+            {
+                return true;
+            }
+ 
+            // p2, q2 and p1 are collinear and
+            // p1 lies on segment p2q2
+            if (o3 == 0 && IsOnSegment(p2, p1, q2))
+            {
+                return true;
+            }
+ 
+            // p2, q2 and q1 are collinear and
+            // q1 lies on segment p2q2
+            if (o4 == 0 && IsOnSegment(p2, q1, q2))
+            {
+                return true;
+            }
+ 
+            // Doesn't fall in any of the above cases
+            return false;
+        }
+        
+        // Given three collinear points p, q, r,
+        // the function checks if point q lies
+        // on line segment 'pr'
+        private static bool IsOnSegment(PointF p, PointF q, PointF r)
+        {
+            return q.X <= Math.Max(p.X, r.X) &&
+                   q.X >= Math.Min(p.X, r.X) &&
+                   q.Y <= Math.Max(p.Y, r.Y) &&
+                   q.Y >= Math.Min(p.Y, r.Y);
+        }
+        
+        // To find orientation of ordered triplet (p, q, r).
+        // The function returns following values
+        // 0 --> p, q and r are collinear
+        // 1 --> Clockwise
+        // 2 --> Counterclockwise
+        private static int GetOrientation(PointF p, PointF q, PointF r)
+        {
+            var val = (q.Y - p.Y) * (r.X - q.X) - (q.X - p.X) * (r.Y - q.Y);
+ 
+            if (val == 0)
+                return 0; // collinear
+           
+            return val > 0 ? 1 : 2; // clock or counterclock wise
         }
     }
 }

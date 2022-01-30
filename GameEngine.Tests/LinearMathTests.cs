@@ -33,6 +33,12 @@ namespace GameEngine.Tests
         {
             LinearMath.IsPointInsidePolygon(point, polygon).Should().BeTrue();
         }
+        
+        [TestCaseSource(nameof(GetPointsInPolygon))]
+        public void DetectPoint_InPolygon_Algorithm2(PointF point, PointF[] polygon)
+        {
+            LinearMath.IsPointInsidePolygon(point, polygon).Should().BeTrue();
+        }
 
         public static IEnumerable<TestCaseData> GetPointsInPolygon()
         {
@@ -42,7 +48,46 @@ namespace GameEngine.Tests
                 new PointF(100, 0),
                 new PointF(0, 100),
                 new PointF(100, 100)
-            });
+            }) { TestName = "Point in center of aligned rectangle" };
+            
+            yield return new TestCaseData(new PointF(0, 0), new[]
+            {
+                new PointF(20, 40),
+                new PointF(40, -20),
+                new PointF(-20, -40),
+                new PointF(-40, 20)
+            }) { TestName = "Point in center of not aligned rectangle" };
+            
+            
+            yield return new TestCaseData(new PointF(0, 0), new[]
+            {
+                new PointF(0, 100),
+                new PointF(100, 40),
+                new PointF(50, -40),
+                new PointF(0, -50),
+                new PointF(-50, -40),
+                new PointF(-100, 40)
+            }) { TestName = "Point in polygon with six vexes" };
+            
+            yield return new TestCaseData(new PointF(100, 100), new[]
+            {
+                new PointF(100, 200),
+                new PointF(200, 140),
+                new PointF(150, 60),
+                new PointF(100, 50),
+                new PointF(50, 60),
+                new PointF(0, 140)
+            }) { TestName = "Point in polygon with six vexes and only positive coordinates" };
+            
+            yield return new TestCaseData(new PointF(0, 0), new[]
+            {
+                new PointF(100, 40),
+                new PointF(130, 10),
+                new PointF(100, -20),
+                new PointF(-100, -20),
+                new PointF(-130, 10),
+                new PointF(-100, 40)
+            }) { TestName = "Point in polygon with six vexes and point is \"not on axis\"" };
         }
     }
 }
