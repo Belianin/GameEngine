@@ -37,7 +37,7 @@ namespace GameEngine.Tests
         [TestCaseSource(nameof(GetPointsInPolygon))]
         public void DetectPoint_InPolygon_Algorithm2(PointF point, PointF[] polygon)
         {
-            LinearMath.IsPointInsidePolygon(point, polygon).Should().BeTrue();
+            LinearMath.IsPointInsidePolygon2(point, polygon).Should().BeTrue();
         }
 
         public static IEnumerable<TestCaseData> GetPointsInPolygon()

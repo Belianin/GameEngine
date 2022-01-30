@@ -75,7 +75,7 @@ namespace GameEngine.Core
         public static bool IsPointInsidePolygon2(PointF point, PointF[] polygon)
         {
             // Create a point for line segment from p to infinite
-            var extreme = new PointF(10000, point.Y);
+            var extreme = new PointF(1000000, point.Y);
  
             // Count intersections of the above line
             // with sides of polygon
